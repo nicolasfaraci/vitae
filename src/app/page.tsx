@@ -72,8 +72,8 @@ export default function Home() {
             <span> de devenir réelles.</span>
           </h1>
           <p className="hero-lead">
-            Product builder & développeur full-stack à Lille. Je conçois et
-            livre des produits web et des sites qui vont droit au but.
+            Product builder & développeur full-stack. Je conçois et livre des
+            produits web et des sites qui vont droit au but.
           </p>
           <div className="hero-actions">
             <a className="button button-primary" href="#contact">
@@ -175,12 +175,12 @@ export default function Home() {
             <p className="section-kicker light">La boîte à outils</p>
             <h2>Solide sur toute la chaîne.</h2>
             <p>
-              Plus de 8 ans à construire des produits et des plateformes pour
-              des équipes métier, des startups et de grandes entreprises.
+              10 années d’expérience à construire des produits pour de petites
+              et grandes entreprises.
             </p>
             <div className="experience-note">
-              <strong>8+</strong>
-              <span>années d’expérience<br />en production</span>
+              <strong>10+</strong>
+              <span>années d’expérience</span>
             </div>
           </div>
           <div className="skills-panel">
@@ -213,14 +213,6 @@ export default function Home() {
               <p>{item.text}</p>
             </article>
           ))}
-        </div>
-        <div className="proof-strip">
-          <p>Une expérience forgée sur des produits utilisés à grande échelle.</p>
-          <div>
-            <strong>DECATHLON</strong>
-            <strong>ADEO</strong>
-            <strong>KBANE</strong>
-          </div>
         </div>
       </section>
 
@@ -256,10 +248,12 @@ export default function Home() {
       <footer className="site-footer">
         <div className="section-shell footer-inner">
           <a className="brand" href="#accueil" aria-label="Retour en haut">
-            <span>NF</span>
-            <strong>Nicolas Faraci</strong>
+            <strong className="brand-name">
+              <span>Nicolas</span>
+              <span>Faraci</span>
+            </strong>
           </a>
-          <p>Product builder · Lille, France</p>
+          <p>Product builder · Développeur full-stack</p>
           <p>© {new Date().getFullYear()} — Tous droits réservés</p>
         </div>
       </footer>

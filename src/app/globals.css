@@ -80,21 +80,22 @@ select {
   letter-spacing: -0.02em;
 }
 
-.brand > span {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
+.brand-name {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 19px;
+  line-height: 1;
+  letter-spacing: -0.055em;
 }
 
-.brand strong {
-  font-size: 15px;
+.brand-name span:first-child {
+  font-weight: 720;
+}
+
+.brand-name span:last-child {
+  color: var(--muted);
+  font-weight: 420;
 }
 
 .nav-links {
@@ -110,8 +111,13 @@ select {
   transition: color 180ms ease;
 }
 
-.nav-links > a:hover {
+.nav-links > a:not(.nav-cta):hover {
   color: var(--ink);
+}
+
+.nav-cta:hover {
+  background: #292a26;
+  color: white;
 }
 
 .nav-cta {
@@ -641,35 +647,6 @@ select {
   line-height: 1.7;
 }
 
-.proof-strip {
-  margin-top: 100px;
-  padding: 34px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.proof-strip p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.proof-strip div {
-  display: flex;
-  align-items: center;
-  gap: clamp(24px, 4vw, 60px);
-}
-
-.proof-strip strong {
-  color: #8a8a82;
-  font-size: 15px;
-  letter-spacing: 0.07em;
-}
-
 .contact-section {
   padding: 130px 0;
   background: var(--accent);
@@ -690,6 +667,8 @@ select {
 }
 
 .availability {
+  width: fit-content;
+  display: flex;
   margin-top: 50px;
   color: var(--ink);
   font-family: var(--font-sans);
@@ -1039,16 +1018,9 @@ select {
     gap: 46px;
   }
 
-  .proof-strip,
   .footer-inner {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .proof-strip div {
-    width: 100%;
-    justify-content: space-between;
-    gap: 16px;
   }
 
   .contact-layout {
@@ -1071,11 +1043,7 @@ select {
 }
 
 @media (max-width: 420px) {
-  .brand strong {
-    display: none;
-  }
-
-  .proof-strip div {
-    flex-wrap: wrap;
+  .brand-name {
+    font-size: 18px;
   }
 }

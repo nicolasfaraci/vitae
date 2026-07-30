@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const turnstileSecret =
+  process.env.TURNSTILE_SECRET_KEY ||
+  (process.env.NODE_ENV === "development"
+    ? "1x0000000000000000000000000000000AA"
+    : "");
 
 type ContactPayload = {
   name?: unknown;
@@ -47,7 +52,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!turnstileToken || !process.env.TURNSTILE_SECRET_KEY) {
+    if (!turnstileToken || !turnstileSecret) {
       return NextResponse.json(
         { error: "La validation anti-spam est requise." },
         { status: 400 },
@@ -60,7 +65,7 @@ export async function POST(request: Request) {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          secret: process.env.TURNSTILE_SECRET_KEY,
+          secret: turnstileSecret,
           response: turnstileToken,
         }),
         cache: "no-store",
@@ -76,7 +81,15 @@ export async function POST(request: Request) {
     }
 
     if (!process.env.RESEND_API_KEY) {
-      throw new Error("RESEND_API_KEY is missing");
+      return NextResponse.json(
+        {
+          error:
+            process.env.NODE_ENV === "development"
+              ? "L’envoi d’e-mail n’est pas configuré sur cet environnement. Ajoutez RESEND_API_KEY pour l’activer."
+              : "Votre demande n’a pas pu être envoyée. Merci de réessayer plus tard.",
+        },
+        { status: 503 },
+      );
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);

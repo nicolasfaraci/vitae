@@ -5,6 +5,10 @@ import { FormEvent, useRef, useState } from "react";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
+const turnstileSiteKey =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+  (process.env.NODE_ENV === "development" ? "1x00000000000000000000AA" : "");
+
 export default function ContactForm() {
   const turnstileRef = useRef<TurnstileInstance>(null);
   const [token, setToken] = useState("");
@@ -50,7 +54,7 @@ export default function ContactForm() {
       setToken("");
       turnstileRef.current?.reset();
       setStatus("success");
-      setMessage("Merci ! Votre message est parti. Je reviens vers vous sous 48 h.");
+      setMessage(data.message || "Merci ! Votre message est parti. Je reviens vers vous sous 48 h.");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Une erreur est survenue.");
@@ -106,7 +110,7 @@ export default function ContactForm() {
       <div className="form-bottom">
         <Turnstile
           ref={turnstileRef}
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+          siteKey={turnstileSiteKey}
           onSuccess={setToken}
           onExpire={() => setToken("")}
           onError={() => {

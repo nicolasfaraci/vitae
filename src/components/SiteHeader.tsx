@@ -15,8 +15,10 @@ export default function SiteHeader() {
     <header className="site-header">
       <div className="section-shell nav-inner">
         <a className="brand" href="#accueil" aria-label="Nicolas Faraci, accueil">
-          <span>NF</span>
-          <strong>Nicolas Faraci</strong>
+          <strong className="brand-name">
+            <span>Nicolas</span>
+            <span>Faraci</span>
+          </strong>
         </a>
         <nav className={open ? "nav-links is-open" : "nav-links"} aria-label="Navigation principale">
           {links.map((link) => (
