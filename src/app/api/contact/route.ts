@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const resendFrom =
+  process.env.RESEND_FROM_EMAIL ||
+  "Site Nicolas Faraci <contact@mail.nicolasfaraci.fr>";
 const turnstileSecret =
   process.env.TURNSTILE_SECRET_KEY ||
   (process.env.NODE_ENV === "development"
@@ -99,7 +102,7 @@ export async function POST(request: Request) {
     const safeMessage = escapeHtml(message).replaceAll("\n", "<br />");
 
     const { error } = await resend.emails.send({
-      from: "Site Nicolas Faraci <onboarding@resend.dev>",
+      from: resendFrom,
       to: ["nicolas.faraci.pro@gmail.com"],
       replyTo: email,
       subject: `[Projet] ${projectType} — ${name}`,
