@@ -1,58 +1,61 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import ThemeToggle from "@/components/ThemeToggle";
-import BackToTop from "@/components/BackToTop";
-import Navigation from "@/components/Navigation";
+
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Nicolas FARACI - Développeur Full-Stack & DevOps | React, Node.js, Kubernetes",
-  description: "Développeur Full-Stack Senior spécialisé en React, Next.js, Spring Boot et DevOps (Kubernetes, Docker, GCP). +7 ans d'expérience chez Decathlon & Kbane. Disponible pour missions freelance à Lille.",
-  keywords: [
-    "développeur full-stack",
-    "développeur React",
-    "développeur Next.js",
-    "DevOps Kubernetes",
-    "ingénieur logiciel",
-    "freelance développeur Lille",
-    "Symfony PHP",
-    "Spring Boot Java",
-    "MongoDB",
-    "GCP Google Cloud",
-    "Docker",
-    "CI/CD",
-    "développeur Decathlon",
-    "développeur freelance France",
-    "Nicolas FARACI"
-  ],
-  authors: [{ name: "Nicolas FARACI" }],
-  creator: "Nicolas FARACI",
-  publisher: "Nicolas FARACI",
-  metadataBase: new URL('https://www.nicolasfaraci.fr'),
-  alternates: {
-    canonical: '/',
+  metadataBase: new URL("https://www.nicolasfaraci.fr"),
+  title: {
+    default: "Nicolas Faraci — Product builder & développeur full-stack",
+    template: "%s — Nicolas Faraci",
   },
+  description:
+    "Je transforme vos idées en produits web utiles et développe des sites rapides, modernes et orientés conversion. Product builder freelance à Lille.",
+  keywords: [
+    "product builder freelance",
+    "création MVP",
+    "développeur site web",
+    "développeur full-stack Lille",
+    "Next.js freelance",
+    "création outil métier",
+    "Nicolas Faraci",
+  ],
+  authors: [{ name: "Nicolas Faraci", url: "https://www.nicolasfaraci.fr" }],
+  creator: "Nicolas Faraci",
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://www.nicolasfaraci.fr",
-    siteName: "Nicolas FARACI - Portfolio",
-    title: "Nicolas FARACI - Développeur Full-Stack & DevOps",
-    description: "Développeur Full-Stack Senior avec +7 ans d'expérience. Expert React, Next.js, Spring Boot et DevOps (Kubernetes, GCP). Créateur d'applications scalables et performantes.",
+    url: "/",
+    siteName: "Nicolas Faraci — Product builder",
+    title: "Vos idées méritent de devenir réelles.",
+    description:
+      "Product builder & développeur full-stack. Je conçois et livre des produits web et des sites qui vont droit au but.",
     images: [
       {
-        url: "/og-image.jpg", // À créer : image 1200x630px
+        url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Nicolas FARACI - Développeur Full-Stack & DevOps",
+        alt: "Vos idées méritent de devenir réelles — Nicolas Faraci, Product builder",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nicolas FARACI - Développeur Full-Stack & DevOps",
-    description: "Expert React, Next.js, Spring Boot et Kubernetes. +7 ans d'expérience chez Decathlon & Kbane.",
-    images: ["/og-image.jpg"],
+    title: "Vos idées méritent de devenir réelles.",
+    description: "Product builder & développeur full-stack à Lille.",
+    images: ["/og.png"],
   },
   robots: {
     index: true,
@@ -60,77 +63,66 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
-  }
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://www.nicolasfaraci.fr/#person",
+      name: "Nicolas Faraci",
+      url: "https://www.nicolasfaraci.fr",
+      jobTitle: "Product builder et développeur full-stack",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Lille",
+        addressCountry: "FR",
+      },
+      knowsAbout: [
+        "Product development",
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Spring Boot",
+        "Symfony",
+        "Cloud computing",
+      ],
+      sameAs: [
+        "https://www.linkedin.com/in/nicolas-faraci-495675147",
+        "https://github.com/FlyzCorp",
+      ],
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.nicolasfaraci.fr/#service",
+      name: "Nicolas Faraci — Product builder",
+      url: "https://www.nicolasfaraci.fr",
+      founder: { "@id": "https://www.nicolasfaraci.fr/#person" },
+      areaServed: { "@type": "Country", name: "France" },
+      serviceType: [
+        "Création de produits web",
+        "Développement de sites web",
+        "Développement full-stack",
+      ],
+    },
+  ],
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className="scroll-smooth" suppressHydrationWarning>
-      <head>
-        {/* Schema.org structured data for better SEO */}
+    <html lang="fr" className={`${geist.variable} ${geistMono.variable}`}>
+      <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Person",
-              "name": "Nicolas FARACI",
-              "url": "https://www.nicolasfaraci.fr",
-              "image": "https://www.nicolasfaraci.fr/profile.png",
-              "jobTitle": "Développeur Full-Stack Senior & DevOps Engineer",
-              "description": "Développeur Full-Stack avec +7 ans d'expérience spécialisé en React, Next.js, Spring Boot et DevOps (Kubernetes, Docker, GCP)",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Lille",
-                "addressCountry": "FR"
-              },
-              "alumniOf": {
-                "@type": "EducationalOrganization",
-                "name": "IMT Lille Douai"
-              },
-              "knowsAbout": [
-                "React",
-                "Next.js",
-                "TypeScript",
-                "Node.js",
-                "PHP Symfony",
-                "Spring Boot",
-                "MongoDB",
-                "Kubernetes",
-                "Docker",
-                "Google Cloud Platform",
-                "DevOps",
-                "CI/CD"
-              ],
-              "worksFor": [
-                {
-                  "@type": "Organization",
-                  "name": "Decathlon"
-                }
-              ],
-              "sameAs": [
-                "https://www.linkedin.com/in/nicolas-faraci",
-                "https://github.com/FlyzCorp"
-              ]
-            })
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-      </head>
-      <body className="antialiased">
-        <ThemeProvider>
-          <Navigation />
-          <ThemeToggle />
-          {children}
-          <BackToTop />
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );
