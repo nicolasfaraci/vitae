@@ -65,73 +65,58 @@ export default function ContactForm() {
 
   return (
     <form className="contact-form" onSubmit={handleSubmit}>
-      <div className="form-heading">
-        <span>01</span>
-        <p>Parlez-moi du projet</p>
+      <div className="form-field">
+        <label htmlFor="contact-name">Nom</label>
+        <input id="contact-name" name="name" type="text" autoComplete="name" minLength={2} maxLength={80} required />
       </div>
-      <div className="form-grid">
-        <label>
-          Votre nom
-          <input name="name" type="text" autoComplete="name" placeholder="Jean Dupont" minLength={2} maxLength={80} required />
-        </label>
-        <label>
-          Votre email
-          <input name="email" type="email" autoComplete="email" placeholder="jean@entreprise.fr" maxLength={160} required />
-        </label>
+      <div className="form-field">
+        <label htmlFor="contact-email">Email</label>
+        <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={160} required />
       </div>
-      <label>
-        Type de projet
-        <select name="projectType" defaultValue="" required>
+      <div className="form-field">
+        <label htmlFor="contact-project-type">Type de projet</label>
+        <select id="contact-project-type" name="projectType" defaultValue="" required>
           <option value="" disabled>Choisir une option</option>
           <option value="Produit / MVP">Produit / MVP</option>
-          <option value="Site vitrine / landing page">Site vitrine / landing page</option>
+          <option value="Fonctionnalité IA">Fonctionnalité IA</option>
           <option value="Outil métier">Outil métier</option>
           <option value="Renfort / audit technique">Renfort / audit technique</option>
+          <option value="Site vitrine / landing page">Site vitrine / landing page</option>
           <option value="Autre">Autre</option>
         </select>
-      </label>
-      <label>
-        Quelques mots sur votre besoin
-        <textarea
-          name="message"
-          rows={5}
-          placeholder="Le contexte, votre objectif, vos contraintes ou votre échéance…"
-          minLength={20}
-          maxLength={3000}
-          required
-        />
-      </label>
-
-      <label className="honeypot" aria-hidden="true">
-        Ne pas remplir ce champ
-        <input name="spamTrap" type="text" tabIndex={-1} autoComplete="off" />
-      </label>
-
-      <div className="form-bottom">
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={turnstileSiteKey}
-          onSuccess={setToken}
-          onExpire={() => setToken("")}
-          onError={() => {
-            setToken("");
-            setStatus("error");
-            setMessage("La protection anti-spam n’a pas pu être chargée.");
-          }}
-          options={{ theme: "light", size: "flexible", language: "fr" }}
-        />
-        <button className="button button-primary submit-button" type="submit" disabled={status === "loading" || !token}>
-          {status === "loading" ? "Envoi en cours…" : "Envoyer ma demande"}
-          <span aria-hidden="true">↗</span>
-        </button>
       </div>
+      <div className="form-field">
+        <label htmlFor="contact-message">Votre besoin</label>
+        <textarea id="contact-message" name="message" rows={4} minLength={20} maxLength={3000} required />
+      </div>
+
+      <div className="honeypot" aria-hidden="true">
+        <label htmlFor="contact-spam-trap">Ne pas remplir ce champ</label>
+        <input id="contact-spam-trap" name="spamTrap" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      <Turnstile
+        ref={turnstileRef}
+        siteKey={turnstileSiteKey}
+        onSuccess={setToken}
+        onExpire={() => setToken("")}
+        onError={() => {
+          setToken("");
+          setStatus("error");
+          setMessage("La protection anti-spam n’a pas pu être chargée.");
+        }}
+        options={{ theme: "light", size: "flexible", language: "fr" }}
+      />
+      <button className="btn btn-dark submit-button" type="submit" disabled={status === "loading" || !token}>
+        {status === "loading" ? "Envoi en cours…" : "Envoyer ↗"}
+      </button>
 
       {message && (
         <p className={`form-message ${status}`} role="status">
           {message}
         </p>
       )}
-      <p className="privacy-note">Vos informations servent uniquement à vous répondre.</p>
+      <p className="privacy-note">Ces informations servent uniquement à vous répondre.</p>
     </form>
   );
 }
