@@ -11,12 +11,15 @@ export default function Hero() {
       const originElement = heroElement.querySelector<HTMLElement>(".hero-origin");
       const filElement = heroElement.querySelector<HTMLElement>(".hero-fil");
       const introElement = heroElement.querySelector<HTMLElement>(".hero-intro");
-      if (!originElement || !filElement || !introElement) return;
+      const hintElement = heroElement.querySelector<HTMLElement>(".hero-hint");
+      if (!originElement || !filElement || !introElement || !hintElement) return;
 
       const filGapAboveIntro = 40;
       const fitFilAboveIntro = () => {
         const filTop = originElement.offsetTop + filElement.offsetTop;
         filElement.style.height = `${Math.max(0, introElement.offsetTop - filTop - filGapAboveIntro)}px`;
+        hintElement.style.left = `${originElement.offsetLeft + originElement.offsetWidth / 2 + 20}px`;
+        hintElement.style.top = `${filTop + 28}px`;
       };
       fitFilAboveIntro();
       ScrollTrigger.addEventListener("refreshInit", fitFilAboveIntro);
@@ -35,7 +38,7 @@ export default function Hero() {
         ease: "expo.out",
         stagger: 0.035,
       });
-      gsap.from(".hero-intro > *", { y: 24, autoAlpha: 0, duration: 0.9, delay: 0.6, stagger: 0.08 });
+      gsap.from(".hero-intro > *, .hero-hint", { y: 24, autoAlpha: 0, duration: 0.9, delay: 0.6, stagger: 0.08 });
 
       const scrollTrigger = {
         trigger: heroElement,
@@ -61,7 +64,12 @@ export default function Hero() {
           { autoAlpha: 0.12, ease: "none", immediateRender: false, scrollTrigger: { ...scrollTrigger, end: "30% top" } },
         );
       }
-      gsap.fromTo(".hero-fil", { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { ...scrollTrigger, start: "top top", end: "bottom 40%" } });
+      gsap.fromTo(".hero-fil", { scaleY: 0.15 }, { scaleY: 1, ease: "none", scrollTrigger: { ...scrollTrigger, end: "bottom 40%" } });
+      gsap.fromTo(
+        ".hero-hint",
+        { opacity: 1 },
+        { opacity: 0, ease: "none", immediateRender: false, scrollTrigger: { ...scrollTrigger, end: "15% top" } },
+      );
       gsap.fromTo(
         ".hero-intro",
         { autoAlpha: 1, y: 0 },
@@ -71,7 +79,7 @@ export default function Hero() {
   });
 
   return (
-    <section className="hero" id="home" ref={heroRef}>
+    <section className="hero" id="home" data-chapter="Nicolas Faraci" ref={heroRef}>
       <h1 className="hero-name" aria-label="Nicolas Faraci">
         <span className="hero-name-line" aria-hidden="true">Nicolas</span>
         <span className="hero-name-line" aria-hidden="true">
@@ -90,11 +98,11 @@ export default function Hero() {
         </p>
         <p className="hero-status">
           <span className="status-dot" aria-hidden="true" />
-          Démarrage sous 2 à 3 semaines
+          Disponible
         </p>
       </div>
-      <a className="hero-scroll" href="#manifeste" aria-label="Défiler vers la suite">
-        Scroll →
+      <a className="hero-hint" href="#manifeste">
+        ↓ Suivez le fil
       </a>
     </section>
   );

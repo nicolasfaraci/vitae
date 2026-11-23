@@ -1,5 +1,12 @@
-export const manifesto =
-  "Je cadre, je code et je mets en ligne votre MVP, votre outil métier ou votre fonctionnalité IA. Un seul interlocuteur, pas de chef de projet entre nous.";
+export const manifestoParts = [
+  { text: "Je cadre, je code et je mets en ligne votre " },
+  { text: "MVP", isHighlighted: true },
+  { text: ", votre " },
+  { text: "outil métier", isHighlighted: true },
+  { text: " ou votre " },
+  { text: "fonctionnalité IA", isHighlighted: true },
+  { text: ". Un seul interlocuteur, pas de chef de projet entre nous." },
+];
 
 export const services = [
   {

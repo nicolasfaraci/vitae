@@ -64,7 +64,7 @@ export default function Contact() {
   });
 
   return (
-    <section className="contact" id="contact" ref={contactRef}>
+    <section className="contact" id="contact" data-chapter="Contact" ref={contactRef}>
       <div className="contact-inner section-shell">
         <div className="contact-copy">
           <p className="section-label">(contact)</p>

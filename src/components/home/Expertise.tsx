@@ -66,7 +66,7 @@ export default function Expertise() {
   });
 
   return (
-    <section className="expertise" id="expertise" ref={expertiseRef}>
+    <section className="expertise" id="expertise" data-chapter="Expertise" ref={expertiseRef}>
       <div className="expertise-head section-shell">
         <p className="expertise-years" aria-hidden="true">
           {yearsOfExperience}

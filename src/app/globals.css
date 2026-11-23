@@ -298,24 +298,28 @@ textarea:focus-visible {
   animation: pulse 1.8s ease-in-out infinite;
 }
 
-.hero-scroll {
+.hero-hint {
   position: absolute;
-  right: var(--gutter);
-  top: 50%;
-  writing-mode: vertical-rl;
+  left: 50%;
+  top: 70%;
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (orientation: portrait) {
+  .hero {
+    min-height: auto;
+    justify-content: flex-start;
+    gap: clamp(140px, 26svh, 320px);
+  }
 }
 
 @media (max-width: 759px) {
   .hero-intro {
     padding-left: 0;
-  }
-
-  .hero-scroll {
-    display: none;
   }
 }
 
@@ -327,6 +331,22 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   padding-block: 120px;
+}
+
+@media (orientation: portrait) {
+  .manifesto {
+    min-height: auto;
+    padding-block: 72px;
+  }
+}
+
+.manifesto-mark {
+  color: inherit;
+  background: linear-gradient(var(--accent), var(--accent)) 0 88% / 100% 0.36em no-repeat;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 .manifesto-inner {
@@ -344,13 +364,6 @@ textarea:focus-visible {
   letter-spacing: -0.05em;
 }
 
-.manifesto-fil {
-  position: absolute;
-  left: 0;
-  bottom: 48px;
-  width: 100%;
-  height: 120px;
-}
 
 /* Services : les offres posées sur le fil */
 
@@ -387,21 +400,34 @@ textarea:focus-visible {
   margin-inline: auto;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(var(--ink), var(--ink)) left top / var(--fil-width) calc(var(--fil-progress, 1) * 100%) no-repeat;
 }
 
 .fil-service {
   padding: 28px 0 28px 28px;
-  border-left: var(--fil-width) solid var(--ink);
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+.fil-service > * {
+  transition: opacity 400ms;
+}
+
+.fil-services.is-tracking .fil-service.is-reached:not(.is-active) > * {
+  opacity: 0.32;
+}
+
+.fil-services.is-tracking .fil-service:not(.is-reached)::before {
+  background: var(--paper);
+}
+
 .fil-service::before {
   content: "";
   position: absolute;
-  left: calc(-9px - var(--fil-width) / 2);
+  transition: background-color 300ms, transform 300ms;
+  left: calc(var(--fil-width) / 2 - 7px);
   top: 34px;
   width: 14px;
   height: 14px;
@@ -473,6 +499,7 @@ textarea:focus-visible {
     position: absolute;
     inset: 0;
     width: auto;
+    background: none;
   }
 
   .fil-stage.is-placed .fil-service {
@@ -533,8 +560,7 @@ textarea:focus-visible {
 .work-title {
   margin: 24px 0 48px;
   padding-inline: var(--gutter);
-  white-space: nowrap;
-  font-size: clamp(56px, 11vw, 200px);
+  font-size: clamp(48px, 11vw, 200px);
   font-weight: 900;
   line-height: 0.88;
   letter-spacing: -0.06em;
@@ -612,28 +638,44 @@ textarea:focus-visible {
 }
 
 .work-progress {
-  margin-top: 56px;
-  height: 2px;
+  --work-progress: 0;
+  position: relative;
+  display: none;
+  height: 1.5px;
   background: var(--dark-line);
 }
 
 .work-progress-bar {
-  display: block;
-  height: 100%;
+  position: absolute;
+  inset: -0.75px 0;
   background: var(--accent);
+  transform: scaleX(var(--work-progress));
   transform-origin: left;
+}
+
+.work-progress-dot {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--work-progress) * 100%);
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: var(--dark);
 }
 
 @media (min-width: 900px) {
   .work {
     height: 100svh;
-    padding-block: 88px 40px;
+    padding-block: 88px 84px;
     display: flex;
     flex-direction: column;
   }
 
   .work-title {
     margin: 12px 0 0;
+    white-space: nowrap;
   }
 
   .work-track {
@@ -661,6 +703,7 @@ textarea:focus-visible {
   }
 
   .work-progress {
+    display: block;
     margin-top: 0;
   }
 }
@@ -686,25 +729,50 @@ textarea:focus-visible {
 .project-visual-fallback {
   position: absolute;
   inset: 0;
-  padding: 24px;
+  padding: 18px 20px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.project-visual-top {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.project-visual-category {
+  padding: 2px 10px;
+  border: 1px solid currentColor;
+  border-radius: 99px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.project-visual-client {
+  max-width: 60%;
+  font-size: clamp(15px, 1.3vw, 19px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .project-visual-monogram {
-  font-size: clamp(80px, 12vw, 180px);
+  position: absolute;
+  right: -0.06em;
+  bottom: -0.16em;
+  font-size: clamp(130px, 15vw, 260px);
   font-weight: 900;
   line-height: 0.8;
   letter-spacing: -0.07em;
 }
 
-.project-visual-category {
-  align-self: flex-end;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.tone-ink .project-visual-client {
+  color: var(--dark-text);
 }
 
 .tone-ink {
@@ -999,7 +1067,7 @@ textarea:focus-visible {
 }
 
 .footer-meta {
-  padding: 28px 0 40px;
+  padding: 28px 0 88px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -1138,4 +1206,65 @@ textarea:focus-visible {
   .project-visual {
     transition: none;
   }
+}
+
+/* Rail de chapitres */
+
+.chapter-rail {
+  --rail-progress: 0;
+  position: fixed;
+  left: var(--gutter);
+  bottom: 16px;
+  z-index: 40;
+  width: min(460px, calc(100% - var(--gutter) * 2));
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 0 1px var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.chapter-rail-count {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.chapter-rail-label {
+  flex: none;
+  min-width: 9ch;
+}
+
+.chapter-rail-line {
+  position: relative;
+  flex: 1;
+  height: 1.5px;
+  background: var(--line);
+}
+
+.chapter-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(var(--rail-progress));
+  transform-origin: left;
+}
+
+.chapter-rail-dot {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--rail-progress) * 100%);
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 1.5px var(--ink);
 }

@@ -4,6 +4,7 @@ import Hero from "@/components/home/Hero";
 import Manifesto from "@/components/home/Manifesto";
 import Services from "@/components/home/Services";
 import Work from "@/components/home/Work";
+import ChapterRail from "@/components/ChapterRail";
 import SiteHeader from "@/components/SiteHeader";
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
         <Expertise />
         <Contact />
       </main>
+      <ChapterRail />
     </>
   );
 }
