@@ -52,24 +52,6 @@ export const projects: Project[] = [
     outcome: "De l’idée à une application exploitable.",
     stack: ["Android Java", "Symfony", "Géolocalisation", "Notifications", "GCP"],
   },
-  {
-    slug: "projet-exemple",
-    title: "Projet exemple,",
-    titleAccent: "à remplacer.",
-    client: "Client à définir",
-    role: "Rôle à définir",
-    period: "Année",
-    category: "Exemple",
-    summary:
-      "Entrée de démonstration : dupliquez-la dans src/content/projects.ts pour ajouter un vrai projet.",
-    description: [
-      "Ce projet sert de gabarit. Remplacez le titre, le résumé, la description, le résultat et la stack.",
-      "Ajoutez un visuel dans public/projects/<slug>/ et référencez-le dans src/content/projectVisuals.ts.",
-    ],
-    outcome: "Le résultat mesurable du projet.",
-    stack: ["Stack", "à", "compléter"],
-    isExample: true,
-  },
 ];
 
 export function findProjectBySlug(slug: string) {

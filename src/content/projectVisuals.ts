@@ -14,7 +14,6 @@ const defaultVisual: ProjectVisual = { tone: "ink" };
 const projectVisuals: Record<string, ProjectVisual> = {
   "traduction-ia": { tone: "ink", monogram: "IA" },
   hellogoodbail: { tone: "accent", monogram: "HGB" },
-  "projet-exemple": { tone: "paper", monogram: "EX" },
 };
 
 export function getProjectVisual(slug: string): ProjectVisual {

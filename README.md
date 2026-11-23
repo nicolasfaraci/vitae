@@ -83,7 +83,7 @@ Ancres de la page : `#home`, `#manifeste`, `#services`, `#work`, `#expertise`, `
 1. Ajouter une entrée dans `src/content/projects.ts` (slug, titre, résumé, description, stack…).
 2. Optionnel : déposer une image dans `public/projects/<slug>/` et la déclarer dans `src/content/projectVisuals.ts` (`cover`). Sans image, une couverture typographique (monogramme + couleur `tone`) est affichée.
 
-La carte du portfolio, la page `/projets/<slug>` et l'entrée du sitemap sont générées automatiquement. Le projet marqué `isExample: true` est un gabarit : il porte un badge « Exemple », n'est pas indexé et peut être supprimé.
+La carte du portfolio, la page `/projets/<slug>` et l'entrée du sitemap sont générées automatiquement. Un projet marqué `isExample: true` porte un badge « Exemple » et n’est pas indexé.
 
 ## Design et animations
 
