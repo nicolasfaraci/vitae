@@ -676,6 +676,7 @@ textarea:focus-visible {
   .work-title {
     margin: 12px 0 0;
     white-space: nowrap;
+    font-size: min(11vw, 15svh, 200px);
   }
 
   .work-track {
@@ -686,7 +687,8 @@ textarea:focus-visible {
     width: max-content;
     padding-right: 20vw;
     padding-left: max(var(--gutter), 8vw);
-    margin-top: 2vh;
+    margin-top: 2svh;
+    min-height: 0;
   }
 
   .work-card {
@@ -694,17 +696,17 @@ textarea:focus-visible {
   }
 
   .work-card:nth-child(even) {
-    transform: translateY(6vh);
+    transform: translateY(3svh);
   }
 
   .work-card .project-visual {
-    aspect-ratio: 16 / 10;
-    max-height: 46svh;
+    aspect-ratio: auto;
+    height: clamp(120px, calc(100svh - 15svh - 520px), 44svh);
   }
 
   .work-progress {
     display: block;
-    margin-top: 0;
+    margin-top: 24px;
   }
 }
 
@@ -1267,4 +1269,10 @@ textarea:focus-visible {
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 0 1.5px var(--ink);
+}
+
+@media (min-width: 900px) and (max-height: 820px) {
+  .work-card-summary {
+    display: none;
+  }
 }
