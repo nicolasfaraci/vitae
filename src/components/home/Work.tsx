@@ -1,51 +1,120 @@
-const projects = [
-  {
-    meta: ["Grand groupe de distribution", "Développeur fullstack", "IA, 2025 à 2026"],
-    title: "Un outil de traduction assisté par IA",
-    description:
-      "Publier des contenus en de nombreuses langues demandait un processus long et très manuel. J’ai conçu et développé, avec les équipes produit et IA, l’outil interne qui fluidifie traduction, validation et publication.",
-    outcome: "Objectif : réduire un délai de localisation d’environ 45 jours.",
-    stack: "Java, Spring Boot, Next.js, Kafka, MongoDB, Kubernetes, Datadog",
-  },
-  {
-    meta: ["HelloGoodBail", "Cofondateur et CTO", "2018 à 2020"],
-    title: "Une application mobile immobilière, construite de zéro",
-    description:
-      "Une app qui prévient les chercheurs de logement quand un bien correspondant à leurs critères est à proximité. Architecture, application Android, backend et déploiement cloud, en autonomie complète.",
-    outcome: "De l’idée à une application exploitable.",
-    stack: "Android Java, Symfony, géolocalisation, notifications, GCP",
-  },
-];
+"use client";
+
+import Link from "next/link";
+import { useRef } from "react";
+import ProjectVisual from "@/components/ProjectVisual";
+import { projects } from "@/content/projects";
+import { desktopMotionQuery, gsap, motionQuery, useScrollMotion } from "@/lib/gsap";
 
 export default function Work() {
+  const workRef = useRef<HTMLElement>(null);
+
+  useScrollMotion(workRef, (matchMedia, workElement) => {
+    matchMedia.add(desktopMotionQuery, () => {
+      const track = workElement.querySelector<HTMLElement>(".work-track");
+      if (!track) return;
+
+      const getTrackDistance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+      const horizontalTween = gsap.to(track, {
+        x: () => -getTrackDistance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: workElement,
+          start: "top top",
+          end: () => `+=${getTrackDistance()}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.to(".work-title", {
+        x: () => -getTrackDistance() * 0.4,
+        ease: "none",
+        scrollTrigger: {
+          trigger: workElement,
+          start: "top top",
+          end: () => `+=${getTrackDistance()}`,
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.fromTo(".work-progress-bar", { scaleX: 0 }, {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: workElement,
+          start: "top top",
+          end: () => `+=${getTrackDistance()}`,
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.utils.toArray<HTMLElement>(".work-card .project-visual", workElement).forEach((visualElement) => {
+        gsap.fromTo(
+          visualElement,
+          { clipPath: "inset(0% 100% 0% 0%)" },
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: visualElement,
+              containerAnimation: horizontalTween,
+              start: "left 95%",
+              end: "left 45%",
+              scrub: true,
+            },
+          },
+        );
+      });
+    });
+
+    matchMedia.add(`${motionQuery} and (max-width: 899px)`, () => {
+      gsap.utils.toArray<HTMLElement>(".work-card", workElement).forEach((cardElement) => {
+        gsap.from(cardElement, {
+          y: 60,
+          autoAlpha: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: cardElement, start: "top 85%" },
+        });
+      });
+    });
+  });
+
   return (
-    <section className="work" id="work">
-      <div className="work-inner section-shell">
-        <div className="section-head">
-          <h2 className="section-title">
-            Déjà livré, <span className="accent-text">pour de vrai.</span>
-          </h2>
-          <div className="section-label">
-            (réalisations, clients<span className="wide-only"> grands comptes</span> anonymisés)
-          </div>
-        </div>
-        <div className="project-list">
-          {projects.map((project) => (
-            <article className="project-row" key={project.title}>
-              <div className="project-meta">
-                {project.meta.map((line) => (
-                  <span key={line}>{line}</span>
-                ))}
+    <section className="work" id="work" ref={workRef}>
+      <div className="work-head section-shell">
+        <p className="section-label">(portfolio · {String(projects.length).padStart(2, "0")} projets)</p>
+      </div>
+      <h2 className="work-title">
+        Déjà livré, <em>pour de vrai.</em>
+      </h2>
+      <div className="work-track">
+        {projects.map((project, projectIndex) => (
+          <article className="work-card" key={project.slug}>
+            <Link className="work-card-link" href={`/projets/${project.slug}`}>
+              <ProjectVisual project={project} sizes="(min-width: 900px) 560px, 100vw" />
+              <div className="work-card-body">
+                <p className="work-card-meta">
+                  {String(projectIndex + 1).padStart(2, "0")} · {project.category} · {project.period}
+                  {project.isExample && <span className="work-card-badge">Exemple</span>}
+                </p>
+                <h3 className="work-card-title">
+                  {project.title} {project.titleAccent && <em>{project.titleAccent}</em>}
+                </h3>
+                <p className="work-card-summary">{project.summary}</p>
+                <span className="work-card-cta">Voir le projet ↗</span>
               </div>
-              <div className="project-body">
-                <h3 className="project-title">{project.title}</h3>
-                <p className="project-description">{project.description}</p>
-                <div className="project-outcome">{project.outcome}</div>
-                <div className="project-stack">{project.stack}</div>
-              </div>
-            </article>
-          ))}
-        </div>
+            </Link>
+          </article>
+        ))}
+      </div>
+      <div className="work-progress section-shell" aria-hidden="true">
+        <span className="work-progress-bar" />
       </div>
     </section>
   );
