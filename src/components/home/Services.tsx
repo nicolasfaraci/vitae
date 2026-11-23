@@ -1,14 +1,36 @@
 "use client";
 
 import { useRef } from "react";
-import { services, servicesNote } from "@/content/home";
+import { services } from "@/content/home";
 import { desktopMotionQuery, gsap, useScrollMotion } from "@/lib/gsap";
 
 const viewBoxWidth = 1440;
 const viewBoxHeight = 810;
-const filPath = "M-40 300 C 240 60, 480 540, 720 470 S 1160 230, 1480 520";
-const serviceAnchors = [0.2, 0.5, 0.78];
-const cardWidth = 300;
+const filPath = "M-40 300 C 260 170, 420 420, 720 360 S 1180 220, 1480 330";
+const cardLeftFractions = [0.06, 0.37, 0.68];
+const anchorInsetFromCardLeft = 14;
+const cardGapBelowFil = 90;
+const pathSampleCount = 200;
+
+function findLengthAtX(path: SVGPathElement, targetX: number) {
+  let lowLength = 0;
+  let highLength = path.getTotalLength();
+  for (let iteration = 0; iteration < 24; iteration++) {
+    const middleLength = (lowLength + highLength) / 2;
+    if (path.getPointAtLength(middleLength).x < targetX) lowLength = middleLength;
+    else highLength = middleLength;
+  }
+  return (lowLength + highLength) / 2;
+}
+
+function findLowestPointY(path: SVGPathElement) {
+  const pathLength = path.getTotalLength();
+  let lowestY = -Infinity;
+  for (let sampleIndex = 0; sampleIndex <= pathSampleCount; sampleIndex++) {
+    lowestY = Math.max(lowestY, path.getPointAtLength((pathLength * sampleIndex) / pathSampleCount).y);
+  }
+  return lowestY;
+}
 
 export default function Services() {
   const servicesRef = useRef<HTMLElement>(null);
@@ -18,17 +40,26 @@ export default function Services() {
       const stage = servicesElement.querySelector<HTMLElement>(".fil-stage");
       const path = servicesElement.querySelector<SVGPathElement>(".fil-stage-path");
       const markers = gsap.utils.toArray<SVGCircleElement>(".fil-marker", servicesElement);
+      const connectors = gsap.utils.toArray<SVGLineElement>(".fil-connector", servicesElement);
       const cards = gsap.utils.toArray<HTMLElement>(".fil-service", servicesElement);
       if (!stage || !path) return;
 
       const pathLength = path.getTotalLength();
-      cards.forEach((card, cardIndex) => {
-        const anchorPoint = path.getPointAtLength(pathLength * serviceAnchors[cardIndex]);
-        const left = Math.min(anchorPoint.x - 24, viewBoxWidth - cardWidth - 24);
-        card.style.setProperty("--x", `${(left / viewBoxWidth) * 100}%`);
-        card.style.setProperty("--y", `${((anchorPoint.y + 36) / viewBoxHeight) * 100}%`);
+      const cardTopY = findLowestPointY(path) + cardGapBelowFil;
+      const anchorProgressByCard = cards.map((card, cardIndex) => {
+        const cardLeftX = cardLeftFractions[cardIndex] * viewBoxWidth;
+        const anchorLength = findLengthAtX(path, cardLeftX + anchorInsetFromCardLeft);
+        const anchorPoint = path.getPointAtLength(anchorLength);
+
+        card.style.setProperty("--x", `${cardLeftFractions[cardIndex] * 100}%`);
+        card.style.setProperty("--y", `${(cardTopY / viewBoxHeight) * 100}%`);
         markers[cardIndex]?.setAttribute("cx", String(anchorPoint.x));
         markers[cardIndex]?.setAttribute("cy", String(anchorPoint.y));
+        connectors[cardIndex]?.setAttribute("x1", String(anchorPoint.x));
+        connectors[cardIndex]?.setAttribute("y1", String(anchorPoint.y));
+        connectors[cardIndex]?.setAttribute("x2", String(anchorPoint.x));
+        connectors[cardIndex]?.setAttribute("y2", String(cardTopY - 14));
+        return anchorLength / pathLength;
       });
       stage.classList.add("is-placed");
 
@@ -49,10 +80,11 @@ export default function Services() {
         .from(".services-head", { autoAlpha: 0, y: 40, duration: 0.12 }, 0);
 
       cards.forEach((card, cardIndex) => {
-        const anchorTime = serviceAnchors[cardIndex];
+        const anchorTime = anchorProgressByCard[cardIndex];
         timeline
           .from(markers[cardIndex], { scale: 0, transformOrigin: "50% 50%", duration: 0.04 }, anchorTime)
-          .from(card, { autoAlpha: 0, y: 50, duration: 0.1, ease: "power2.out" }, anchorTime);
+          .fromTo(connectors[cardIndex], { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.06 }, anchorTime)
+          .from(card, { autoAlpha: 0, y: 40, duration: 0.1, ease: "power2.out" }, anchorTime + 0.04);
       });
 
       return () => stage.classList.remove("is-placed");
@@ -77,9 +109,12 @@ export default function Services() {
           <path className="fil-stage-path" d={filPath} />
           <text className="fil-stage-text" dy="-18">
             <textPath href="#services-fil" startOffset="4%">
-              Concevoir — Construire — Livrer — Concevoir — Construire — Livrer —
+              Concevoir — Construire — Livrer — Concevoir — Construire — Livrer
             </textPath>
           </text>
+          {services.map((service) => (
+            <line className="fil-connector" key={`${service.title}-connector`} x1="0" y1="0" x2="0" y2="0" />
+          ))}
           {services.map((service) => (
             <circle className="fil-marker" key={service.title} r="10" cx="0" cy="0" />
           ))}
@@ -95,7 +130,6 @@ export default function Services() {
           ))}
         </ol>
       </div>
-      <p className="services-note section-shell">{servicesNote}</p>
     </section>
   );
 }

@@ -254,7 +254,7 @@ textarea:focus-visible {
   left: 50%;
   top: calc(100% + 0.04em);
   width: var(--fil-width);
-  height: 60vh;
+  height: 0;
   margin-left: calc(var(--fil-width) / -2);
   background: var(--ink);
   transform-origin: top;
@@ -316,10 +316,6 @@ textarea:focus-visible {
 
   .hero-scroll {
     display: none;
-  }
-
-  .hero-fil {
-    height: 30vh;
   }
 }
 
@@ -437,13 +433,6 @@ textarea:focus-visible {
   line-height: 1.5;
 }
 
-.services-note {
-  margin-top: 48px;
-  margin-bottom: 0;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--muted);
-}
 
 @media (min-width: 900px) {
   .services:has(.fil-stage.is-placed) {
@@ -460,12 +449,6 @@ textarea:focus-visible {
     z-index: 2;
   }
 
-  .services:has(.fil-stage.is-placed) .services-note {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 32px;
-  }
 
   .fil-stage.is-placed {
     position: absolute;
@@ -496,7 +479,7 @@ textarea:focus-visible {
     position: absolute;
     left: var(--x);
     top: var(--y);
-    width: 300px;
+    width: min(300px, 28%);
     padding: 0;
     border: none;
   }
@@ -519,6 +502,12 @@ textarea:focus-visible {
   font-weight: 800;
   letter-spacing: -1px;
   fill: var(--ink);
+}
+
+.fil-connector {
+  stroke: var(--ink);
+  stroke-width: 1.5px;
+  stroke-dasharray: 3 5;
 }
 
 .fil-marker {

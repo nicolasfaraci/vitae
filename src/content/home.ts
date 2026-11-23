@@ -22,9 +22,6 @@ export const services = [
   },
 ];
 
-export const servicesNote =
-  "Une landing page ou un site vitrine ? Oui, en complément d’un projet produit.";
-
 export const expertiseGroups = [
   {
     title: "Concevoir",

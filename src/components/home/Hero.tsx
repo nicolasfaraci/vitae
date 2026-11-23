@@ -1,12 +1,29 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, motionQuery, SplitText, useScrollMotion } from "@/lib/gsap";
+import { gsap, motionQuery, ScrollTrigger, SplitText, useScrollMotion } from "@/lib/gsap";
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
 
   useScrollMotion(heroRef, (matchMedia, heroElement) => {
+    matchMedia.add("all", () => {
+      const originElement = heroElement.querySelector<HTMLElement>(".hero-origin");
+      const filElement = heroElement.querySelector<HTMLElement>(".hero-fil");
+      const introElement = heroElement.querySelector<HTMLElement>(".hero-intro");
+      if (!originElement || !filElement || !introElement) return;
+
+      const filGapAboveIntro = 40;
+      const fitFilAboveIntro = () => {
+        const filTop = originElement.offsetTop + filElement.offsetTop;
+        filElement.style.height = `${Math.max(0, introElement.offsetTop - filTop - filGapAboveIntro)}px`;
+      };
+      fitFilAboveIntro();
+      ScrollTrigger.addEventListener("refreshInit", fitFilAboveIntro);
+
+      return () => ScrollTrigger.removeEventListener("refreshInit", fitFilAboveIntro);
+    });
+
     matchMedia.add(motionQuery, () => {
       const nameSplit = SplitText.create(".hero-name-line", { type: "chars", charsClass: "hero-char" });
       const originChar = heroElement.querySelector(".hero-origin .hero-char");
@@ -76,8 +93,8 @@ export default function Hero() {
           Démarrage sous 2 à 3 semaines
         </p>
       </div>
-      <a className="hero-scroll" href="#manifeste">
-        Scroll ↓
+      <a className="hero-scroll" href="#manifeste" aria-label="Défiler vers la suite">
+        Scroll →
       </a>
     </section>
   );
