@@ -1092,6 +1092,52 @@ textarea:focus-visible {
   font-size: 13px;
 }
 
+.footer-credit {
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  color: var(--ink);
+}
+
+.footer-credit-human {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.footer-credit-human em {
+  font-size: 1.3em;
+}
+
+.footer-credit-fil {
+  width: clamp(72px, 8vw, 108px);
+  aspect-ratio: 6;
+}
+
+.footer-credit-fil path {
+  stroke-width: 2px;
+}
+
+.footer-credit-knot {
+  fill: var(--accent);
+  stroke: var(--ink);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.footer-credit-machine {
+  white-space: nowrap;
+}
+
+.footer-credit-claude {
+  padding: 1px 4px;
+  color: var(--ink);
+  background: linear-gradient(var(--accent), var(--accent)) 0 0 / 100% 100% no-repeat;
+}
+
 /* Étude de cas */
 
 .case {

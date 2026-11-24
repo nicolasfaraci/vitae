@@ -39,8 +39,36 @@ export default function Contact() {
         scrollTrigger: { trigger: ".contact-signature", start: "top bottom", end: "bottom bottom", scrub: 1 },
       });
 
+      const typedSplit = SplitText.create(".footer-credit-typed", { type: "chars" });
+      const creditTimeline = gsap
+        .timeline({ scrollTrigger: { trigger: ".footer-credit", start: "top bottom-=24px" } })
+        .from(".footer-credit-human", { yPercent: 60, autoAlpha: 0, duration: 0.7, ease: "expo.out" })
+        .addLabel("thread", "-=0.25")
+        .fromTo(
+          ".footer-credit-fil path",
+          { drawSVG: "0%" },
+          { drawSVG: "100%", duration: 0.9, ease: "power2.inOut" },
+          "thread",
+        )
+        .from(
+          ".footer-credit-knot",
+          { scale: 0, svgOrigin: "111 10", duration: 0.7, ease: "elastic.out(1.1, 0.4)" },
+          "-=0.12",
+        )
+        .from(".footer-credit-machine", { autoAlpha: 0, duration: 0.01 }, "-=0.45")
+        .from(typedSplit.chars, { autoAlpha: 0, duration: 0.01, stagger: 0.055 }, "<")
+        .from(".footer-credit-claude", { backgroundSize: "0% 100%", duration: 0.45, ease: "power3.out" }, "+=0.1");
+
+      const creditElement = contactElement.querySelector<HTMLElement>(".footer-credit");
+      const replayCredit = () => {
+        if (!creditTimeline.isActive() && creditTimeline.progress() === 1) creditTimeline.play("thread");
+      };
+      creditElement?.addEventListener("pointerenter", replayCredit);
+
       const ctaElement = contactElement.querySelector<HTMLElement>(".contact-cta");
-      if (!ctaElement || !window.matchMedia("(hover: hover)").matches) return;
+      if (!ctaElement || !window.matchMedia("(hover: hover)").matches) {
+        return () => creditElement?.removeEventListener("pointerenter", replayCredit);
+      }
 
       const moveCtaX = gsap.quickTo(ctaElement, "x", { duration: 0.5, ease: "power3" });
       const moveCtaY = gsap.quickTo(ctaElement, "y", { duration: 0.5, ease: "power3" });
@@ -57,6 +85,7 @@ export default function Contact() {
       ctaElement.addEventListener("pointerleave", releaseCta);
 
       return () => {
+        creditElement?.removeEventListener("pointerenter", replayCredit);
         ctaElement.removeEventListener("pointermove", attractCta);
         ctaElement.removeEventListener("pointerleave", releaseCta);
       };
@@ -101,7 +130,21 @@ export default function Contact() {
         </p>
         <div className="footer-meta section-shell">
           <span>Nicolas Faraci</span>
-          <span>Pensé par un humain, codé avec Claude</span>
+          <p className="footer-credit">
+            <span className="footer-credit-human">
+              Pensé par <em>un humain</em>
+            </span>
+            <svg className="footer-credit-fil fil" viewBox="0 0 120 20" aria-hidden="true">
+              <path d="M2 12 C 22 2, 38 20, 58 10 S 92 4, 110 10" vectorEffect="non-scaling-stroke" />
+              <circle className="footer-credit-knot" cx="111" cy="10" r="7" />
+            </svg>
+            <span className="footer-credit-machine">
+              <span className="footer-credit-typed">
+                codé avec <mark className="footer-credit-claude">Claude</mark>
+              </span>
+              <span className="brand-cursor" aria-hidden="true">_</span>
+            </span>
+          </p>
           <span>France · {new Date().getFullYear()}</span>
         </div>
       </footer>
