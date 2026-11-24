@@ -151,8 +151,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #fff;
-  mix-blend-mode: difference;
+  color: var(--ink);
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.04em;
@@ -160,11 +159,24 @@ textarea:focus-visible {
   pointer-events: none;
 }
 
-.site-header a {
+.brand,
+.nav {
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 0 1px var(--line);
   pointer-events: auto;
 }
 
+.site-header a:focus-visible {
+  outline-color: var(--ink);
+}
+
 .brand {
+  display: inline-flex;
+  align-items: center;
   font-weight: 500;
   font-size: 15px;
 }
@@ -175,6 +187,7 @@ textarea:focus-visible {
 
 .nav {
   display: flex;
+  align-items: center;
   gap: 28px;
 }
 
