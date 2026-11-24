@@ -492,11 +492,11 @@ textarea:focus-visible {
   .fil-stage.is-placed {
     position: absolute;
     left: 50%;
-    top: 55%;
+    top: var(--stage-top, 0px);
     margin: 0;
-    width: min(100vw, 160svh);
+    width: var(--stage-width, min(100vw, 160svh));
     aspect-ratio: 1440 / 810;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
   }
 
   .fil-stage.is-placed .fil-stage-svg {
@@ -698,14 +698,13 @@ textarea:focus-visible {
     align-items: center;
     gap: 64px;
     width: max-content;
-    padding-right: 20vw;
-    padding-left: max(var(--gutter), 8vw);
+    padding-inline: max(var(--gutter), 8vw);
     margin-top: 2svh;
     min-height: 0;
   }
 
   .work-card {
-    width: clamp(420px, 38vw, 600px);
+    width: clamp(340px, 38vw, 600px);
   }
 
   .work-card:nth-child(even) {
@@ -720,6 +719,10 @@ textarea:focus-visible {
   .work-progress {
     display: block;
     margin-top: 24px;
+  }
+
+  .work.is-static .work-progress {
+    visibility: hidden;
   }
 }
 

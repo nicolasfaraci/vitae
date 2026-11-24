@@ -41,11 +41,13 @@ export default function Work() {
       };
 
       const getTrackDistance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const markStaticWhenTrackFits = () => workElement.classList.toggle("is-static", getTrackDistance() === 0);
       const pinnedScroll = {
         trigger: workElement,
         start: "top top",
         end: () => `+=${getTrackDistance()}`,
         invalidateOnRefresh: true,
+        onRefresh: markStaticWhenTrackFits,
       };
 
       const horizontalTween = gsap.to(track, {
@@ -55,9 +57,12 @@ export default function Work() {
         onUpdate: highlightCentralCard,
       });
       highlightCentralCard();
+      markStaticWhenTrackFits();
 
+      const title = workElement.querySelector<HTMLElement>(".work-title");
+      const getTitleOverflow = () => (title ? Math.max(0, title.scrollWidth - window.innerWidth) : 0);
       gsap.to(".work-title", {
-        x: () => -getTrackDistance() * 0.4,
+        x: () => -Math.min(getTrackDistance() * 0.4, getTitleOverflow()),
         ease: "none",
         scrollTrigger: { ...pinnedScroll, scrub: 1 },
       });
@@ -75,16 +80,15 @@ export default function Work() {
           {
             clipPath: "inset(0% 0% 0% 0%)",
             ease: "power2.out",
-            scrollTrigger: {
-              trigger: visualElement,
-              containerAnimation: horizontalTween,
-              start: "left 95%",
-              end: "left 45%",
-              scrub: true,
-            },
+            scrollTrigger:
+              getTrackDistance() > 0
+                ? { trigger: visualElement, containerAnimation: horizontalTween, start: "left 95%", end: "left 45%", scrub: true }
+                : { trigger: workElement, start: "top 60%", end: "top top", scrub: true },
           },
         );
       });
+
+      return () => workElement.classList.remove("is-static");
     });
 
     matchMedia.add(`${motionQuery} and (max-width: 899px)`, () => {

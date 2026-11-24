@@ -12,6 +12,10 @@ const anchorInsetFromCardLeft = 14;
 const cardGapBelowFil = 90;
 const pathSampleCount = 200;
 const inactiveServiceOpacity = 0.32;
+const filTextClearance = 64;
+const stageGapBelowHead = 32;
+const stageBottomReserve = 88;
+const minimumFlattenFactor = 0.35;
 
 function findLengthAtX(path: SVGPathElement, targetX: number) {
   let lowLength = 0;
@@ -24,13 +28,24 @@ function findLengthAtX(path: SVGPathElement, targetX: number) {
   return (lowLength + highLength) / 2;
 }
 
-function findLowestPointY(path: SVGPathElement) {
+function flattenPathVertically(pathData: string, flattenFactor: number, centerY: number) {
+  let coordinateIndex = 0;
+  return pathData.replace(/-?\d+(\.\d+)?/g, (coordinate) => {
+    const isY = coordinateIndex++ % 2 === 1;
+    return isY ? String(centerY + (Number(coordinate) - centerY) * flattenFactor) : coordinate;
+  });
+}
+
+function findVerticalExtent(path: SVGPathElement) {
   const pathLength = path.getTotalLength();
+  let highestY = Infinity;
   let lowestY = -Infinity;
   for (let sampleIndex = 0; sampleIndex <= pathSampleCount; sampleIndex++) {
-    lowestY = Math.max(lowestY, path.getPointAtLength((pathLength * sampleIndex) / pathSampleCount).y);
+    const sampleY = path.getPointAtLength((pathLength * sampleIndex) / pathSampleCount).y;
+    highestY = Math.min(highestY, sampleY);
+    lowestY = Math.max(lowestY, sampleY);
   }
-  return lowestY;
+  return { highestY, lowestY };
 }
 
 export default function Services() {
@@ -39,30 +54,56 @@ export default function Services() {
   useScrollMotion(servicesRef, (matchMedia, servicesElement) => {
     matchMedia.add(desktopMotionQuery, () => {
       const stage = servicesElement.querySelector<HTMLElement>(".fil-stage");
+      const head = servicesElement.querySelector<HTMLElement>(".services-head");
       const path = servicesElement.querySelector<SVGPathElement>(".fil-stage-path");
       const markers = gsap.utils.toArray<SVGCircleElement>(".fil-marker", servicesElement);
       const connectors = gsap.utils.toArray<SVGLineElement>(".fil-connector", servicesElement);
       const cards = gsap.utils.toArray<HTMLElement>(".fil-service", servicesElement);
-      if (!stage || !path) return;
+      if (!stage || !head || !path) return;
 
-      const pathLength = path.getTotalLength();
-      const cardTopY = findLowestPointY(path) + cardGapBelowFil;
-      const anchorProgressByCard = cards.map((card, cardIndex) => {
-        const cardLeftX = cardLeftFractions[cardIndex] * viewBoxWidth;
-        const anchorLength = findLengthAtX(path, cardLeftX + anchorInsetFromCardLeft);
-        const anchorPoint = path.getPointAtLength(anchorLength);
+      const filPaths = gsap.utils.toArray<SVGPathElement>(".fil-stage-path, #services-fil", servicesElement);
 
-        card.style.setProperty("--x", `${cardLeftFractions[cardIndex] * 100}%`);
-        card.style.setProperty("--y", `${(cardTopY / viewBoxHeight) * 100}%`);
-        markers[cardIndex]?.setAttribute("cx", String(anchorPoint.x));
-        markers[cardIndex]?.setAttribute("cy", String(anchorPoint.y));
-        connectors[cardIndex]?.setAttribute("x1", String(anchorPoint.x));
-        connectors[cardIndex]?.setAttribute("y1", String(anchorPoint.y));
-        connectors[cardIndex]?.setAttribute("x2", String(anchorPoint.x));
-        connectors[cardIndex]?.setAttribute("y2", String(cardTopY - 14));
-        return anchorLength / pathLength;
-      });
-      stage.classList.add("is-placed");
+      // Pleine largeur ; sur un écran bas, on aplatit la vague pour que fil et cartes tiennent sous le titre.
+      const placeStage = () => {
+        const stageScale = window.innerWidth / viewBoxWidth;
+        stage.style.setProperty("--stage-width", `${viewBoxWidth * stageScale}px`);
+        filPaths.forEach((filElement) => filElement.setAttribute("d", filPath));
+        stage.classList.add("is-placed");
+
+        const naturalExtent = findVerticalExtent(path);
+        const naturalSpread = naturalExtent.lowestY - naturalExtent.highestY + cardGapBelowFil;
+        const bandTop = head.offsetTop + head.offsetHeight + stageGapBelowHead;
+        const bandHeight = servicesElement.clientHeight - stageBottomReserve - bandTop;
+        const cardHeight = Math.max(...cards.map((card) => card.offsetHeight));
+        const availableSpread = (bandHeight - cardHeight) / stageScale - filTextClearance;
+        const flattenFactor = gsap.utils.clamp(minimumFlattenFactor, 1, availableSpread / naturalSpread);
+        const flattenCenterY = (naturalExtent.highestY + naturalExtent.lowestY) / 2;
+        const flattenedPath = flattenPathVertically(filPath, flattenFactor, flattenCenterY);
+        filPaths.forEach((filElement) => filElement.setAttribute("d", flattenedPath));
+
+        const { highestY, lowestY } = findVerticalExtent(path);
+        const cardTopY = lowestY + cardGapBelowFil * flattenFactor;
+        const pathLength = path.getTotalLength();
+        stage.style.setProperty("--stage-top", `${bandTop - (highestY - filTextClearance) * stageScale}px`);
+
+        return cards.map((card, cardIndex) => {
+          const cardLeftX = cardLeftFractions[cardIndex] * viewBoxWidth;
+          const anchorLength = findLengthAtX(path, cardLeftX + anchorInsetFromCardLeft);
+          const anchorPoint = path.getPointAtLength(anchorLength);
+
+          card.style.setProperty("--x", `${cardLeftFractions[cardIndex] * 100}%`);
+          card.style.setProperty("--y", `${(cardTopY / viewBoxHeight) * 100}%`);
+          markers[cardIndex]?.setAttribute("cx", String(anchorPoint.x));
+          markers[cardIndex]?.setAttribute("cy", String(anchorPoint.y));
+          connectors[cardIndex]?.setAttribute("x1", String(anchorPoint.x));
+          connectors[cardIndex]?.setAttribute("y1", String(anchorPoint.y));
+          connectors[cardIndex]?.setAttribute("x2", String(anchorPoint.x));
+          connectors[cardIndex]?.setAttribute("y2", String(cardTopY - 14));
+          return anchorLength / pathLength;
+        });
+      };
+      const anchorProgressByCard = placeStage();
+      ScrollTrigger.addEventListener("refreshInit", placeStage);
 
       const timeline = gsap.timeline({
         defaults: { ease: "none" },
@@ -72,6 +113,7 @@ export default function Services() {
           end: "+=220%",
           pin: true,
           scrub: 1,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -103,7 +145,13 @@ export default function Services() {
         .to(cards, { opacity: 1, duration: 0.04 }, 0.95)
         .to(markers, { scale: 1, duration: 0.04 }, 0.95);
 
-      return () => stage.classList.remove("is-placed");
+      return () => {
+        ScrollTrigger.removeEventListener("refreshInit", placeStage);
+        filPaths.forEach((filElement) => filElement.setAttribute("d", filPath));
+        stage.classList.remove("is-placed");
+        stage.style.removeProperty("--stage-width");
+        stage.style.removeProperty("--stage-top");
+      };
     });
 
     matchMedia.add(`${motionQuery} and (max-width: 899px)`, () => {
