@@ -19,9 +19,9 @@ export default function Manifesto() {
         scrollTrigger: {
           trigger: manifestoElement,
           start: "center center",
-          end: "+=160%",
+          end: "+=100%",
           pin: true,
-          scrub: 0.6,
+          scrub: 0.35,
         },
       });
       timeline.from(wordSplit.words, { opacity: 0.1, stagger: wordStagger, duration: 1 });
