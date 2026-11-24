@@ -101,7 +101,7 @@ export default function Contact() {
         </p>
         <div className="footer-meta section-shell">
           <span>Nicolas Faraci</span>
-          <span>Développeur fullstack senior, MVP web et mobile</span>
+          <span>Pensé par un humain, codé avec Claude</span>
           <span>France · {new Date().getFullYear()}</span>
         </div>
       </footer>
